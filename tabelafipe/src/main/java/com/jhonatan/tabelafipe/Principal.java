@@ -7,6 +7,7 @@ import com.jhonatan.tabelafipe.service.ConverterDados;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Principal {
@@ -38,15 +39,28 @@ public class Principal {
                 .sorted(Comparator.comparing(DadosConvertidosMarcas::codigo))
                 .forEach(d -> System.out.println("Cód: " + d.codigo() + " Descrição: " + d.nome()));
 
-        System.out.println("Informe o código da marca para consulta:");
-        var codigoDaMarca = leitura.nextLine();
-        json = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/" + tipoAutomovel + "/marcas/" + codigoDaMarca + "/modelos");
+        System.out.println("Informe o nome ou o código da marca: ");
+        var entrada = leitura.nextLine().trim().toUpperCase();
+
+        Optional<DadosConvertidosMarcas> marcaEncotrada = Arrays.stream(dadosConvertidosMarcas)
+                .filter(m -> m.nome().toUpperCase().contains(entrada))
+                .findFirst();
+
+        if (entrada.matches("\\d+")) {
+            json = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/" + tipoAutomovel + "/marcas/" + entrada + "/modelos");
+        } else if (marcaEncotrada.isPresent()) {
+            String codicoMarca = marcaEncotrada.get().codigo();
+            json = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/"  + tipoAutomovel + "/marcas/" + codicoMarca + "/modelos");
+        } else {
+            System.out.println("Marca não encotrada! Digite os dados corretamente!");
+        }
+
         System.out.println(json);
         DadosConvertidosModelos dadosConvertidosModelos = converterDados.Conversor(json, DadosConvertidosModelos.class);
         dadosConvertidosModelos.modelos().forEach(m -> System.out.println("Cód: " + m.codigo() + " Descrição: " + m.nome()));
 
         System.out.println("Digite um trecho do nome do modelo que deseja visualizar: ");
-        var trechoDoModelo = leitura.nextLine();
+        var trechoDoModelo = leitura.nextLine().trim().toUpperCase();
         dadosConvertidosModelos.modelos().stream()
                 .filter(m -> m.nome().contains(trechoDoModelo))
                 .forEach(m -> System.out.println("Cód: " + m.codigo() + " Descrição: " + m.nome()));
