@@ -35,19 +35,20 @@ public class Principal {
         System.out.println(json);
         ConverterDados converterDados = new ConverterDados();
         DadosConvertidosMarcas[] dadosConvertidosMarcas = converterDados.Conversor(json, DadosConvertidosMarcas[].class);
+        Arrays.stream(dadosConvertidosMarcas).forEach(c -> System.out.println("Cód: " + c.codigo() + " Descrição: " + c.nome()));
 
-        if (tipoAutomovel.contains("carr")) {
-            carros = Arrays.stream(dadosConvertidosMarcas).map(m -> new Carros(m.nome(), m.codigo())).toList();
-            carros.stream().sorted(Comparator.comparing(Carros::getCodigo)).forEach(c -> System.out.println("Cód: " + c.getCodigo() + " Descrição: " + c.getNome()));
-        } else if (tipoAutomovel.contains("mot")) {
-            motos = Arrays.stream(dadosConvertidosMarcas).map(m -> new Motos(m.nome(), m.codigo())).toList();
-            motos.stream().sorted(Comparator.comparing(Motos::getCodigo)).forEach(c -> System.out.println("Cód: " + c.getCodigo() + " Descrição: " + c.getNome()));
-        } else if (tipoAutomovel.contains("cam")) {
-            caminhoes = Arrays.stream(dadosConvertidosMarcas).map(m -> new Caminhoes(m.nome(), m.codigo())).toList();
-            caminhoes.stream().sorted(Comparator.comparing(Caminhoes::getCodigo)).forEach(c -> System.out.println("Cód: " + c.getCodigo() + " Descrição: " + c.getNome()));
-        } else {
-            System.out.println("Erro! veiculo não encontrado!");
-        }
+//        if (tipoAutomovel.contains("carr")) {
+//            carros = Arrays.stream(dadosConvertidosMarcas).map(m -> new Carros(m.nome(), m.codigo())).toList();
+//            carros.stream().sorted(Comparator.comparing(Carros::getCodigo)).forEach(c -> System.out.println("Cód: " + c.getCodigo() + " Descrição: " + c.getNome()));
+//        } else if (tipoAutomovel.contains("mot")) {
+//            motos = Arrays.stream(dadosConvertidosMarcas).map(m -> new Motos(m.nome(), m.codigo())).toList();
+//            motos.stream().sorted(Comparator.comparing(Motos::getCodigo)).forEach(c -> System.out.println("Cód: " + c.getCodigo() + " Descrição: " + c.getNome()));
+//        } else if (tipoAutomovel.contains("cam")) {
+//            caminhoes = Arrays.stream(dadosConvertidosMarcas).map(m -> new Caminhoes(m.nome(), m.codigo())).toList();
+//            caminhoes.stream().sorted(Comparator.comparing(Caminhoes::getCodigo)).forEach(c -> System.out.println("Cód: " + c.getCodigo() + " Descrição: " + c.getNome()));
+//        } else {
+//            System.out.println("Erro! veiculo não encontrado!");
+//        }
 
 
         System.out.println("Informe o nome ou o código da marca: ");
@@ -68,7 +69,20 @@ public class Principal {
 
         System.out.println(json);
         DadosConvertidosModelos dadosConvertidosModelos = converterDados.Conversor(json, DadosConvertidosModelos.class);
-        dadosConvertidosModelos.modelos().forEach(m -> System.out.println("Cód: " + m.codigo() + " Descrição: " + m.nome()));
+
+        if (tipoAutomovel.contains("carr")) {
+            carros = dadosConvertidosModelos.modelos().stream().map(m -> new Carros(m.nome(), m.codigo()))
+                    .toList();
+            carros.forEach(mcarro -> System.out.println("Cód: " + mcarro.getCodigo() + " Descrição: " + mcarro.getNome()));
+        } else if (tipoAutomovel.contains("mot")) {
+            motos = dadosConvertidosModelos.modelos().stream().map(m -> new Motos(m.nome(), m.codigo()))
+                    .toList();
+            motos.forEach(mmoto -> System.out.println("Cód: " + mmoto.getCodigo() + " Descrição: " + mmoto.getNome()));
+        } else if (tipoAutomovel.contains("cam")) {
+            caminhoes = dadosConvertidosModelos.modelos().stream().map(mcaminhao -> new Caminhoes(mcaminhao.nome(), mcaminhao.codigo()))
+                    .toList();
+            caminhoes.forEach(m -> System.out.println("Cód: " + m.getCodigo() + " Descrição: " + m.getNome()));
+        }
 
         System.out.println("Digite um trecho do nome do modelo que deseja visualizar: ");
         var trechoDoModelo = leitura.nextLine().trim().toUpperCase();
