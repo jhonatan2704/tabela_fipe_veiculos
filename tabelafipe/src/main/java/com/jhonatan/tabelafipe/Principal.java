@@ -3,12 +3,19 @@ package com.jhonatan.tabelafipe;
 import com.jhonatan.tabelafipe.exceptions.ExceptionApi;
 import com.jhonatan.tabelafipe.exceptions.ExceptionConversao;
 import com.jhonatan.tabelafipe.model.*;
+import com.jhonatan.tabelafipe.repository.ModeloVeicularRepository;
 import com.jhonatan.tabelafipe.service.ConsumoApi;
 import com.jhonatan.tabelafipe.service.ConverterDados;
 
 import java.util.*;
 
 public class Principal {
+    private ModeloVeicularRepository modeloVeicularRepository;
+
+    public Principal(ModeloVeicularRepository modeloVeicularRepository) {
+        this.modeloVeicularRepository = modeloVeicularRepository;
+    }
+
     public void inicializarSistema() {
         Scanner leitura = new Scanner(System.in);
         System.out.println("""
@@ -75,17 +82,20 @@ public class Principal {
 
 
             if (tipoAutomovel.contains("carr")) {
-                carros = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.nome(), m.codigo(), TipoVeiculo.CARRO))
+                carros = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.codigo(), m.nome(), TipoVeiculo.CARRO))
                         .toList();
-                carros.forEach(mcarro -> System.out.println("Cód: " + mcarro.getCodigo() + " Descrição: " + mcarro.getNome()));
+                carros.forEach(mcarro -> System.out.println("Cód: " + mcarro.getCodigo() + " Descrição: " + mcarro.getModelo()));
+                modeloVeicularRepository.saveAll(carros);
             } else if (tipoAutomovel.contains("mot")) {
-                motos = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.nome(), m.codigo(), TipoVeiculo.MOTO))
+                motos = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.codigo(), m.nome(), TipoVeiculo.MOTO))
                         .toList();
-                motos.forEach(mmoto -> System.out.println("Cód: " + mmoto.getCodigo() + " Descrição: " + mmoto.getNome()));
+                motos.forEach(mmoto -> System.out.println("Cód: " + mmoto.getCodigo() + " Descrição: " + mmoto.getModelo()));
+                modeloVeicularRepository.saveAll(motos);
             } else if (tipoAutomovel.contains("cam")) {
-                caminhoes = dadosConvertidosModelos.modelos().stream().map(mcaminhao -> new ModeloVeiculo(mcaminhao.nome(), mcaminhao.codigo(), TipoVeiculo.CAMINHAO))
+                caminhoes = dadosConvertidosModelos.modelos().stream().map(mcaminhao -> new ModeloVeiculo(mcaminhao.codigo(), mcaminhao.nome(), TipoVeiculo.CAMINHAO))
                         .toList();
-                caminhoes.forEach(m -> System.out.println("Cód: " + m.getCodigo() + " Descrição: " + m.getNome()));
+                caminhoes.forEach(m -> System.out.println("Cód: " + m.getCodigo() + " Descrição: " + m.getModelo()));
+                modeloVeicularRepository.saveAll(caminhoes);
             } else {
                 System.out.println("ERRO! ");
             }

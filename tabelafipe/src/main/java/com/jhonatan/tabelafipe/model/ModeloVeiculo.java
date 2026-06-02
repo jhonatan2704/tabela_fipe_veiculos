@@ -1,14 +1,32 @@
 package com.jhonatan.tabelafipe.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class ModeloVeiculo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
     private String codigo;
-    private String nome;
+    @Column(nullable = false)
+    private String modelo;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TipoVeiculo tipo;
 
-    public ModeloVeiculo(String codigo, String nome, TipoVeiculo tipo) {
+    public ModeloVeiculo(String codigo, String modelo, TipoVeiculo tipo) {
         this.codigo = codigo;
-        this.nome = nome;
+        this.modelo = modelo;
         this.tipo = tipo;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCodigo() {
@@ -19,12 +37,13 @@ public class ModeloVeiculo {
         this.codigo = codigo;
     }
 
-    public String getNome() {
-        return nome;
+
+    public String getModelo() {
+        return modelo;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
     }
 
     public TipoVeiculo getTipo() {
