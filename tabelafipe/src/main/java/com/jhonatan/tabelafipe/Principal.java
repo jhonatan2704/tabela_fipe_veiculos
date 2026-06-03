@@ -37,9 +37,8 @@ public class Principal {
             return;
         }
 
-        List<ModeloVeiculo> carros;
-        List<ModeloVeiculo> motos;
-        List<ModeloVeiculo> caminhoes;
+        List<ModeloVeiculo> veiculos;
+
         try {
             var json = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/" + tipoAutomovel + "/marcas");
             System.out.println(json);
@@ -82,20 +81,32 @@ public class Principal {
 
 
             if (tipoAutomovel.contains("carr")) {
-                carros = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.codigo(), m.nome(), TipoVeiculo.CARRO))
+                veiculos = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.codigo(), m.nome(), TipoVeiculo.CARRO))
                         .toList();
-                carros.forEach(mcarro -> System.out.println("Cód: " + mcarro.getCodigo() + " Descrição: " + mcarro.getModelo()));
-                modeloVeicularRepository.saveAll(carros);
+                veiculos.forEach(mcarro -> System.out.println("Cód: " + mcarro.getCodigo() + " Descrição: " + mcarro.getModelo()));
+                for (ModeloVeiculo modeloVeiculo : veiculos) {
+                    if (!modeloVeicularRepository.existsByCodigoAndTipo(modeloVeiculo.getCodigo(), modeloVeiculo.getTipo())) {
+                        modeloVeicularRepository.save(modeloVeiculo);
+                    }
+                }
             } else if (tipoAutomovel.contains("mot")) {
-                motos = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.codigo(), m.nome(), TipoVeiculo.MOTO))
+                veiculos = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.codigo(), m.nome(), TipoVeiculo.MOTO))
                         .toList();
-                motos.forEach(mmoto -> System.out.println("Cód: " + mmoto.getCodigo() + " Descrição: " + mmoto.getModelo()));
-                modeloVeicularRepository.saveAll(motos);
+                veiculos.forEach(mmoto -> System.out.println("Cód: " + mmoto.getCodigo() + " Descrição: " + mmoto.getModelo()));
+                for (ModeloVeiculo modeloVeiculo : veiculos) {
+                    if (!modeloVeicularRepository.existsByCodigoAndTipo(modeloVeiculo.getCodigo(), modeloVeiculo.getTipo())) {
+                        modeloVeicularRepository.save(modeloVeiculo);
+                    }
+                }
             } else if (tipoAutomovel.contains("cam")) {
-                caminhoes = dadosConvertidosModelos.modelos().stream().map(mcaminhao -> new ModeloVeiculo(mcaminhao.codigo(), mcaminhao.nome(), TipoVeiculo.CAMINHAO))
+                veiculos = dadosConvertidosModelos.modelos().stream().map(mcaminhao -> new ModeloVeiculo(mcaminhao.codigo(), mcaminhao.nome(), TipoVeiculo.CAMINHAO))
                         .toList();
-                caminhoes.forEach(m -> System.out.println("Cód: " + m.getCodigo() + " Descrição: " + m.getModelo()));
-                modeloVeicularRepository.saveAll(caminhoes);
+                veiculos.forEach(m -> System.out.println("Cód: " + m.getCodigo() + " Descrição: " + m.getModelo()));
+                for (ModeloVeiculo modeloVeiculo : veiculos) {
+                    if (!modeloVeicularRepository.existsByCodigoAndTipo(modeloVeiculo.getCodigo(), modeloVeiculo.getTipo())) {
+                        modeloVeicularRepository.save(modeloVeiculo);
+                    }
+                }
             } else {
                 System.out.println("ERRO! ");
             }
