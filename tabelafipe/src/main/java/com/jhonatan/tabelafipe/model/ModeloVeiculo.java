@@ -14,12 +14,17 @@ public class ModeloVeiculo {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoVeiculo tipo;
+    @ManyToOne
+    @JoinColumn(name = "marca_id")
+    private MarcaVeiculo marca;
 
     public ModeloVeiculo(String codigo, String modelo, TipoVeiculo tipo) {
         this.codigo = codigo;
         this.modelo = modelo;
         this.tipo = tipo;
     }
+
+    public ModeloVeiculo() {}
 
     public Long getId() {
         return id;
@@ -52,5 +57,13 @@ public class ModeloVeiculo {
 
     public void setTipo(TipoVeiculo tipo) {
         this.tipo = tipo;
+    }
+
+    public MarcaVeiculo getMarca() {
+        return marca;
+    }
+
+    public void setMarca(MarcaVeiculo marca) {
+        this.marca = marca;
     }
 }

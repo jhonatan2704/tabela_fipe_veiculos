@@ -1,8 +1,9 @@
-package com.jhonatan.tabelafipe;
+package com.jhonatan.tabelafipe.principal;
 
 import com.jhonatan.tabelafipe.exceptions.ExceptionApi;
 import com.jhonatan.tabelafipe.exceptions.ExceptionConversao;
 import com.jhonatan.tabelafipe.model.*;
+import com.jhonatan.tabelafipe.repository.MarcaVeiculoRepository;
 import com.jhonatan.tabelafipe.repository.ModeloVeicularRepository;
 import com.jhonatan.tabelafipe.service.ConsumoApi;
 import com.jhonatan.tabelafipe.service.ConverterDados;
@@ -11,9 +12,11 @@ import java.util.*;
 
 public class Principal {
     private ModeloVeicularRepository modeloVeicularRepository;
+    private MarcaVeiculoRepository marcaRepository;
 
-    public Principal(ModeloVeicularRepository modeloVeicularRepository) {
+    public Principal(ModeloVeicularRepository modeloVeicularRepository, MarcaVeiculoRepository marcaRepository) {
         this.modeloVeicularRepository = modeloVeicularRepository;
+        this.marcaRepository = marcaRepository;
     }
 
     public void inicializarSistema() {
@@ -38,6 +41,7 @@ public class Principal {
         }
 
         List<ModeloVeiculo> veiculos;
+        List<MarcaVeiculo> marcas;
 
         try {
             var json = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/" + tipoAutomovel + "/marcas");
@@ -45,19 +49,33 @@ public class Principal {
             ConverterDados converterDados = new ConverterDados();
             DadosConvertidosMarcas[] dadosConvertidosMarcas = converterDados.Conversor(json, DadosConvertidosMarcas[].class);
             Arrays.stream(dadosConvertidosMarcas).forEach(c -> System.out.println("Cód: " + c.codigo() + " Descrição: " + c.nome()));
-
-//        if (tipoAutomovel.contains("carr")) {
-//            carros = Arrays.stream(dadosConvertidosMarcas).map(m -> new Carros(m.nome(), m.codigo())).toList();
-//            carros.stream().sorted(Comparator.comparing(Carros::getCodigo)).forEach(c -> System.out.println("Cód: " + c.getCodigo() + " Descrição: " + c.getNome()));
-//        } else if (tipoAutomovel.contains("mot")) {
-//            motos = Arrays.stream(dadosConvertidosMarcas).map(m -> new Motos(m.nome(), m.codigo())).toList();
-//            motos.stream().sorted(Comparator.comparing(Motos::getCodigo)).forEach(c -> System.out.println("Cód: " + c.getCodigo() + " Descrição: " + c.getNome()));
-//        } else if (tipoAutomovel.contains("cam")) {
-//            caminhoes = Arrays.stream(dadosConvertidosMarcas).map(m -> new Caminhoes(m.nome(), m.codigo())).toList();
-//            caminhoes.stream().sorted(Comparator.comparing(Caminhoes::getCodigo)).forEach(c -> System.out.println("Cód: " + c.getCodigo() + " Descrição: " + c.getNome()));
-//        } else {
-//            System.out.println("Erro! veiculo não encontrado!");
-//        }
+            if (tipoAutomovel.contains("carr")) {
+                marcas = Arrays.stream(dadosConvertidosMarcas).map(m -> new MarcaVeiculo(m.codigo(), m.nome())).toList();
+                marcas.forEach(marca ->System.out.println("Cód: " + marca.getCodigo() + " Descrição: " + marca.getNome()));
+                for (MarcaVeiculo marca : marcas) {
+                    if(!marcaRepository.existsByCodigoAndNome(marca.getCodigo(), marca.getNome())){
+                        marcaRepository.save(marca);
+                    }
+                }
+            } else if (tipoAutomovel.contains("mot")) {
+                marcas = Arrays.stream(dadosConvertidosMarcas).map(m -> new MarcaVeiculo(m.codigo(), m.nome())).toList();
+                marcas.forEach(marca ->System.out.println("Cód: " + marca.getCodigo() + " Descrição: " + marca.getNome()));
+                for (MarcaVeiculo marca : marcas) {
+                    if(!marcaRepository.existsByCodigoAndNome(marca.getCodigo(), marca.getNome())){
+                        marcaRepository.save(marca);
+                    }
+                }
+            } else if (tipoAutomovel.contains("cam")) {
+                marcas = Arrays.stream(dadosConvertidosMarcas).map(m -> new MarcaVeiculo(m.codigo(), m.nome())).toList();
+                marcas.forEach(marca ->System.out.println("Cód: " + marca.getCodigo() + " Descrição: " + marca.getNome()));
+                for (MarcaVeiculo marca : marcas) {
+                    if(!marcaRepository.existsByCodigoAndNome(marca.getCodigo(), marca.getNome())){
+                        marcaRepository.save(marca);
+                    }
+                }
+            } else {
+                System.out.println("ERRO! ");
+            }
 
 
             System.out.println("Informe o nome ou o código da marca: ");
@@ -67,12 +85,19 @@ public class Principal {
                     .filter(m -> m.nome().toUpperCase().contains(entrada))
                     .findFirst();
 
+            MarcaVeiculo marcaSelecionada;
+
             if (entrada.matches("\\d+")) {
+                marcaSelecionada = marcaRepository.findByCodigo(entrada).orElseThrow();
                 json = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/" + tipoAutomovel + "/marcas/" + entrada + "/modelos");
             } else if (marcaEncotrada.isPresent()) {
                 String codicoMarca = marcaEncotrada.get().codigo();
+                marcaSelecionada = marcaRepository
+                        .findByCodigo(codicoMarca)
+                        .orElseThrow();
                 json = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/" + tipoAutomovel + "/marcas/" + codicoMarca + "/modelos");
             } else {
+                marcaSelecionada = null;
                 System.out.println("Marca não encotrada! Digite os dados corretamente!");
             }
 
@@ -81,7 +106,17 @@ public class Principal {
 
 
             if (tipoAutomovel.contains("carr")) {
-                veiculos = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.codigo(), m.nome(), TipoVeiculo.CARRO))
+                veiculos = dadosConvertidosModelos.modelos().stream()
+                        .map(m -> {
+                            ModeloVeiculo modelo = new ModeloVeiculo(
+                                    m.codigo(),
+                                    m.nome(),
+                                    TipoVeiculo.CARRO
+                            );
+                            modelo.setMarca(marcaSelecionada);
+
+                            return modelo;
+                        })
                         .toList();
                 veiculos.forEach(mcarro -> System.out.println("Cód: " + mcarro.getCodigo() + " Descrição: " + mcarro.getModelo()));
                 for (ModeloVeiculo modeloVeiculo : veiculos) {
@@ -90,7 +125,17 @@ public class Principal {
                     }
                 }
             } else if (tipoAutomovel.contains("mot")) {
-                veiculos = dadosConvertidosModelos.modelos().stream().map(m -> new ModeloVeiculo(m.codigo(), m.nome(), TipoVeiculo.MOTO))
+                veiculos = dadosConvertidosModelos.modelos().stream()
+                        .map(m -> {
+                            ModeloVeiculo modelo = new ModeloVeiculo(
+                                    m.codigo(),
+                                    m.nome(),
+                                    TipoVeiculo.MOTO
+                            );
+                            modelo.setMarca(marcaSelecionada);
+
+                            return modelo;
+                        })
                         .toList();
                 veiculos.forEach(mmoto -> System.out.println("Cód: " + mmoto.getCodigo() + " Descrição: " + mmoto.getModelo()));
                 for (ModeloVeiculo modeloVeiculo : veiculos) {
@@ -99,7 +144,17 @@ public class Principal {
                     }
                 }
             } else if (tipoAutomovel.contains("cam")) {
-                veiculos = dadosConvertidosModelos.modelos().stream().map(mcaminhao -> new ModeloVeiculo(mcaminhao.codigo(), mcaminhao.nome(), TipoVeiculo.CAMINHAO))
+                veiculos = dadosConvertidosModelos.modelos().stream()
+                        .map(m -> {
+                            ModeloVeiculo modelo = new ModeloVeiculo(
+                                    m.codigo(),
+                                    m.nome(),
+                                    TipoVeiculo.CAMINHAO
+                            );
+                            modelo.setMarca(marcaSelecionada);
+
+                            return modelo;
+                        })
                         .toList();
                 veiculos.forEach(m -> System.out.println("Cód: " + m.getCodigo() + " Descrição: " + m.getModelo()));
                 for (ModeloVeiculo modeloVeiculo : veiculos) {
