@@ -66,4 +66,9 @@ public class ModeloVeiculo {
     public void setMarca(MarcaVeiculo marca) {
         this.marca = marca;
     }
+
+    @Override
+    public String toString() {
+        return modelo + " - ";
+    }
 }

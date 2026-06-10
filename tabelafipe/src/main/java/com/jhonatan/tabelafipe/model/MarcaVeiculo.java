@@ -14,7 +14,7 @@ public class MarcaVeiculo {
     private String codigo;
     @Column(nullable = false)
     private String nome;
-    @OneToMany(mappedBy = "marca")
+    @OneToMany(mappedBy = "marca",  fetch = FetchType.EAGER)
     private List<ModeloVeiculo> modelos = new ArrayList<>();
 
 
