@@ -13,13 +13,15 @@ public class MarcaVeiculo {
     @Column(nullable = false)
     private String codigo;
     @Column(nullable = false)
+    private TipoVeiculo tipoVeiculo;
     private String nome;
     @OneToMany(mappedBy = "marca",  fetch = FetchType.EAGER)
     private List<ModeloVeiculo> modelos = new ArrayList<>();
 
 
-    public MarcaVeiculo(String codigo, String nome) {
+    public MarcaVeiculo(String codigo, TipoVeiculo tipoVeiculo, String nome) {
         this.codigo = codigo;
+        this.tipoVeiculo = tipoVeiculo;
         this.nome = nome;
     }
 
@@ -55,5 +57,13 @@ public class MarcaVeiculo {
 
     public void setModelos(List<ModeloVeiculo> modelos) {
         this.modelos = modelos;
+    }
+
+    @Override
+    public String toString() {
+        return "Codigo = " + codigo +
+                ", Tipo de veiculo = " + tipoVeiculo +
+                ", Marca = " + nome +
+                ", Modelos = " + modelos;
     }
 }
