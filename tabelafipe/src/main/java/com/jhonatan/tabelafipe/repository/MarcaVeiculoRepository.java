@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface MarcaVeiculoRepository extends JpaRepository<MarcaVeiculo, Long> {
     boolean existsByCodigoAndNome(String codigo, String nome);
     Optional<MarcaVeiculo> findByCodigo(String codigo);
-    List<MarcaVeiculo> findByNomeContainingIgnoreCase(String consulta);
+    //List<MarcaVeiculo> findByNomeContainingIgnoreCase(String consulta);
+    List<MarcaVeiculo> findByNomeContainingIgnoreCase(String consultamarca);
     List<MarcaVeiculo> findByTipoVeiculo(TipoVeiculo tipoVeiculo);
+    Optional<MarcaVeiculo> findById(Long id);
 }

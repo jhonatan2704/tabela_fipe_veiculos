@@ -1,5 +1,6 @@
 package com.jhonatan.tabelafipe.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +17,7 @@ public class ModeloVeiculo {
     private TipoVeiculo tipo;
     @ManyToOne
     @JoinColumn(name = "marca_id")
+    @JsonBackReference
     private MarcaVeiculo marca;
 
     public ModeloVeiculo(String codigo, String modelo, TipoVeiculo tipo) {

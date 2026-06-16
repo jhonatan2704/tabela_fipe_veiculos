@@ -1,5 +1,6 @@
 package com.jhonatan.tabelafipe.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class MarcaVeiculo {
     private TipoVeiculo tipoVeiculo;
     private String nome;
     @OneToMany(mappedBy = "marca",  fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<ModeloVeiculo> modelos = new ArrayList<>();
 
 
