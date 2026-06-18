@@ -3,6 +3,7 @@ package com.jhonatan.tabelafipe.Controller;
 import com.jhonatan.tabelafipe.model.DadosConvertidosMarcas;
 import com.jhonatan.tabelafipe.model.MarcaVeiculo;
 import com.jhonatan.tabelafipe.model.ModeloVeiculo;
+import com.jhonatan.tabelafipe.model.TipoVeiculo;
 import com.jhonatan.tabelafipe.repository.MarcaVeiculoRepository;
 import com.jhonatan.tabelafipe.service.ConsumoApi;
 import com.jhonatan.tabelafipe.service.ConverterDados;
@@ -18,10 +19,14 @@ import java.util.Optional;
 public class MarcaController {
     private final MarcaVeiculoRepository marcaVeiculo;
     private final FipeSyncService fipeSyncService;
+    private final ConsumoApi consumoApi;
+    private final ConverterDados converterDados;
 
-    public MarcaController(MarcaVeiculoRepository marcaVeiculo, FipeSyncService fipeSyncService) {
+    public MarcaController(MarcaVeiculoRepository marcaVeiculo, FipeSyncService fipeSyncService, ConsumoApi consumoApi, ConverterDados converterDados) {
         this.marcaVeiculo = marcaVeiculo;
         this.fipeSyncService = fipeSyncService;
+        this.consumoApi = consumoApi;
+        this.converterDados = converterDados;
     }
 
     @GetMapping("/marcas")
@@ -46,29 +51,18 @@ public class MarcaController {
     @GetMapping("/sincronizar/{tipo}")
     public String rodarSincronizacao(@PathVariable String tipo) {
         try {
+            TipoVeiculo tipoVeiculo = TipoVeiculo.fromString(tipo);
             String url = "https://parallelum.com.br/fipe/api/v1/" + tipo + "/marcas";
+            String json = consumoApi.BuscaApi(url);
+            DadosConvertidosMarcas[] listaMarcas = converterDados.Conversor(json, DadosConvertidosMarcas[].class);
+            fipeSyncService.sincronizarDados(Arrays.asList(listaMarcas), tipoVeiculo);
 
-            // Etapa 1: Consumo
-            ConsumoApi consumoApi = new ConsumoApi();
-            String dados = consumoApi.BuscaApi(url);
-            if (dados == null || dados.contains("error")) {
-                return "Falha na etapa 1 (API): A URL " + url + " retornou erro ou nulo.";
-            }
+            return "Sincronização de " + tipo + " concluída com sucesso!";
 
-            // Etapa 2: Conversão
-            ConverterDados converterDados = new ConverterDados();
-            DadosConvertidosMarcas[] dadosConvertidos = converterDados.Conversor(dados, DadosConvertidosMarcas[].class);
-            if (dadosConvertidos == null || dadosConvertidos.length == 0) {
-                return "Falha na etapa 2 (Conversão): O JSON retornado não foi convertido corretamente.";
-            }
-
-            // Etapa 3: Banco
-            fipeSyncService.sincronizarDados(Arrays.asList(dadosConvertidos));
-
-            return "Sincronização de " + tipo + " concluída com sucesso! Total processado: " + dadosConvertidos.length;
-
+        } catch (IllegalArgumentException e) {
+            return "Erro: Tipo inválido! Use 'carros', 'motos' ou 'caminhoes'.";
         } catch (Exception e) {
-            return "Erro Crítico na Etapa 3 (Banco/Service): " + e.getMessage();
+            return "Erro crítico durante a sincronização: " + e.getMessage();
         }
     }
 }

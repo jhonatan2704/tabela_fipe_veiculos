@@ -13,7 +13,8 @@ public class MarcaVeiculo {
     private Long id;
     @Column(nullable = false)
     private String codigo;
-    @Column(nullable = false)
+    @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
     private TipoVeiculo tipoVeiculo;
     private String nome;
     @OneToMany(mappedBy = "marca",  fetch = FetchType.EAGER)
@@ -59,6 +60,14 @@ public class MarcaVeiculo {
 
     public void setModelos(List<ModeloVeiculo> modelos) {
         this.modelos = modelos;
+    }
+
+    public TipoVeiculo getTipoVeiculo() {
+        return tipoVeiculo;
+    }
+
+    public void setTipoVeiculo(TipoVeiculo tipoVeiculo) {
+        this.tipoVeiculo = tipoVeiculo;
     }
 
     @Override
