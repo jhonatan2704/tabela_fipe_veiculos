@@ -12,9 +12,9 @@ import java.util.List;
 @Service
 public class FipeSyncService {
 
-    @Autowired
     private MarcaVeiculoRepository repository;
 
+    @Autowired
     public void setRepository(MarcaVeiculoRepository repository) {
         this.repository = repository;
     }

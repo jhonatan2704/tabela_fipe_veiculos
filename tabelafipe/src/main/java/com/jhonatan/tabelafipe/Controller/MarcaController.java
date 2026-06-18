@@ -17,9 +17,11 @@ import java.util.Optional;
 @RestController
 public class MarcaController {
     private final MarcaVeiculoRepository marcaVeiculo;
+    private final FipeSyncService fipeSyncService;
 
-    public MarcaController(MarcaVeiculoRepository marcaVeiculo) {
+    public MarcaController(MarcaVeiculoRepository marcaVeiculo, FipeSyncService fipeSyncService) {
         this.marcaVeiculo = marcaVeiculo;
+        this.fipeSyncService = fipeSyncService;
     }
 
     @GetMapping("/marcas")
@@ -43,21 +45,11 @@ public class MarcaController {
 
     @GetMapping("/sincronizar")
     public String rodarSincronizacao() {
-        FipeSyncService fipeSyncService = new FipeSyncService();
-        fipeSyncService.setRepository(marcaVeiculo);
         ConsumoApi consumoApi = new ConsumoApi();
         String dados = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/marcas");
         ConverterDados converterDados = new ConverterDados();
         DadosConvertidosMarcas[] dadosConvertidosMarcas = converterDados.Conversor(dados, DadosConvertidosMarcas[].class);
         fipeSyncService.sincronizarDados(Arrays.asList(dadosConvertidosMarcas));
         return "Sincronização concluída!";
-    }
-
-    @GetMapping("/testar-banco")
-    public String testarBanco() {
-        if (marcaVeiculo == null) {
-            return "Erro: Repository é nulo!";
-        }
-        return "Sucesso: Repository carregado, total de marcas: " + marcaVeiculo.count();
     }
 }
