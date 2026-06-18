@@ -5,6 +5,7 @@ import com.jhonatan.tabelafipe.model.MarcaVeiculo;
 import com.jhonatan.tabelafipe.repository.MarcaVeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,11 @@ public class FipeSyncService {
     @Autowired
     private MarcaVeiculoRepository repository;
 
+    public void setRepository(MarcaVeiculoRepository repository) {
+        this.repository = repository;
+    }
+
+    @Transactional
     public void sincronizarDados(List<DadosConvertidosMarcas> listaApi) {
         for (DadosConvertidosMarcas dto : listaApi) {
             // Verifica se já existe para não duplicar

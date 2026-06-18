@@ -16,14 +16,10 @@ import java.util.Optional;
 
 @RestController
 public class MarcaController {
-    @Autowired
     private final MarcaVeiculoRepository marcaVeiculo;
-    @Autowired
-    private final FipeSyncService fipeSyncService;
 
-    public MarcaController(MarcaVeiculoRepository marcaVeiculo, FipeSyncService fipeSyncService) {
+    public MarcaController(MarcaVeiculoRepository marcaVeiculo) {
         this.marcaVeiculo = marcaVeiculo;
-        this.fipeSyncService = fipeSyncService;
     }
 
     @GetMapping("/marcas")
@@ -47,11 +43,13 @@ public class MarcaController {
 
     @GetMapping("/sincronizar")
     public String rodarSincronizacao() {
+        FipeSyncService fipeSyncService = new FipeSyncService();
+        fipeSyncService.setRepository(marcaVeiculo);
         ConsumoApi consumoApi = new ConsumoApi();
         String dados = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/marcas");
         ConverterDados converterDados = new ConverterDados();
         DadosConvertidosMarcas[] dadosConvertidosMarcas = converterDados.Conversor(dados, DadosConvertidosMarcas[].class);
-                fipeSyncService.sincronizarDados(Arrays.asList(dadosConvertidosMarcas));
+        fipeSyncService.sincronizarDados(Arrays.asList(dadosConvertidosMarcas));
         return "Sincronização concluída!";
     }
 }
