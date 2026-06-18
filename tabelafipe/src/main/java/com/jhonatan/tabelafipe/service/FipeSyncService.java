@@ -23,7 +23,7 @@ public class FipeSyncService {
     public void sincronizarDados(List<DadosConvertidosMarcas> listaApi) {
         for (DadosConvertidosMarcas dto : listaApi) {
             // Verifica se já existe para não duplicar
-            if (!repository.existsByCodigo(dto.codigo())) {
+            if (!repository.existsByNome(dto.nome())) {
                 // Cria a entidade do seu banco a partir do que veio da API
                 MarcaVeiculo novaMarca = new MarcaVeiculo();
                 novaMarca.setNome(dto.nome());

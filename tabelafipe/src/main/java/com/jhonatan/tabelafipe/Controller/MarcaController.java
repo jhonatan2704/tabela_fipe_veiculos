@@ -52,4 +52,12 @@ public class MarcaController {
         fipeSyncService.sincronizarDados(Arrays.asList(dadosConvertidosMarcas));
         return "Sincronização concluída!";
     }
+
+    @GetMapping("/testar-banco")
+    public String testarBanco() {
+        if (marcaVeiculo == null) {
+            return "Erro: Repository é nulo!";
+        }
+        return "Sucesso: Repository carregado, total de marcas: " + marcaVeiculo.count();
+    }
 }
