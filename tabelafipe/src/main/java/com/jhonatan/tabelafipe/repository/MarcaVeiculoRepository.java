@@ -14,4 +14,8 @@ public interface MarcaVeiculoRepository extends JpaRepository<MarcaVeiculo, Long
     List<MarcaVeiculo> findByNomeContainingIgnoreCase(String consultamarca);
     List<MarcaVeiculo> findByTipoVeiculo(TipoVeiculo tipoVeiculo);
     Optional<MarcaVeiculo> findById(Long id);
+
+    boolean existsByNome(String nome);
+
+    boolean existsByCodigo(String codigo);
 }
