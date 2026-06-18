@@ -13,8 +13,7 @@ public class MarcaVeiculo {
     private Long id;
     @Column(nullable = false)
     private String codigo;
-    @Column(nullable = true)
-    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TipoVeiculo tipoVeiculo;
     private String nome;
     @OneToMany(mappedBy = "marca",  fetch = FetchType.EAGER)
