@@ -45,13 +45,30 @@ public class MarcaController {
 
     @GetMapping("/sincronizar/{tipo}")
     public String rodarSincronizacao(@PathVariable String tipo) {
-        String url = "https://parallelum.com.br/fipe/api/v1/" + tipo + "/marcas";
-        ConsumoApi consumoApi = new ConsumoApi();
-        String dados = consumoApi.BuscaApi(url);
-        ConverterDados converterDados = new ConverterDados();
-        DadosConvertidosMarcas[] dadosConvertidosMarcas = converterDados.Conversor(dados, DadosConvertidosMarcas[].class);
-        fipeSyncService.sincronizarDados(Arrays.asList(dadosConvertidosMarcas));
+        try {
+            String url = "https://parallelum.com.br/fipe/api/v1/" + tipo + "/marcas";
 
-        return "Sincronização de" + tipo + "concluída!";
+            // Etapa 1: Consumo
+            ConsumoApi consumoApi = new ConsumoApi();
+            String dados = consumoApi.BuscaApi(url);
+            if (dados == null || dados.contains("error")) {
+                return "Falha na etapa 1 (API): A URL " + url + " retornou erro ou nulo.";
+            }
+
+            // Etapa 2: Conversão
+            ConverterDados converterDados = new ConverterDados();
+            DadosConvertidosMarcas[] dadosConvertidos = converterDados.Conversor(dados, DadosConvertidosMarcas[].class);
+            if (dadosConvertidos == null || dadosConvertidos.length == 0) {
+                return "Falha na etapa 2 (Conversão): O JSON retornado não foi convertido corretamente.";
+            }
+
+            // Etapa 3: Banco
+            fipeSyncService.sincronizarDados(Arrays.asList(dadosConvertidos));
+
+            return "Sincronização de " + tipo + " concluída com sucesso! Total processado: " + dadosConvertidos.length;
+
+        } catch (Exception e) {
+            return "Erro Crítico na Etapa 3 (Banco/Service): " + e.getMessage();
+        }
     }
 }
