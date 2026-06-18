@@ -16,7 +16,9 @@ import java.util.Optional;
 
 @RestController
 public class MarcaController {
+    @Autowired
     private final MarcaVeiculoRepository marcaVeiculo;
+    @Autowired
     private final FipeSyncService fipeSyncService;
 
     public MarcaController(MarcaVeiculoRepository marcaVeiculo, FipeSyncService fipeSyncService) {
