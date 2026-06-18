@@ -17,10 +17,11 @@ import java.util.Optional;
 @RestController
 public class MarcaController {
     private final MarcaVeiculoRepository marcaVeiculo;
-    FipeSyncService fipeSyncService;
+    private final FipeSyncService fipeSyncService;
 
-    public MarcaController(MarcaVeiculoRepository marcaVeiculo) {
+    public MarcaController(MarcaVeiculoRepository marcaVeiculo, FipeSyncService fipeSyncService) {
         this.marcaVeiculo = marcaVeiculo;
+        this.fipeSyncService = fipeSyncService;
     }
 
     @GetMapping("/marcas")
