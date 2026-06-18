@@ -43,13 +43,15 @@ public class MarcaController {
     }
 
 
-    @GetMapping("/sincronizar")
-    public String rodarSincronizacao() {
+    @GetMapping("/sincronizar/{tipo}")
+    public String rodarSincronizacao(@PathVariable String tipo) {
+        String url = "https://parallelum.com.br/fipe/api/v1/" + tipo + "/marcas";
         ConsumoApi consumoApi = new ConsumoApi();
-        String dados = consumoApi.BuscaApi("https://parallelum.com.br/fipe/api/v1/marcas");
+        String dados = consumoApi.BuscaApi(url);
         ConverterDados converterDados = new ConverterDados();
         DadosConvertidosMarcas[] dadosConvertidosMarcas = converterDados.Conversor(dados, DadosConvertidosMarcas[].class);
         fipeSyncService.sincronizarDados(Arrays.asList(dadosConvertidosMarcas));
-        return "Sincronização concluída!";
+
+        return "Sincronização de" + tipo + "concluída!";
     }
 }
