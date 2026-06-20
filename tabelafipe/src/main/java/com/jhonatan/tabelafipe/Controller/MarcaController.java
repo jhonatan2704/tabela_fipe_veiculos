@@ -2,8 +2,6 @@ package com.jhonatan.tabelafipe.Controller;
 
 import com.jhonatan.tabelafipe.model.MarcaVeiculo;
 import com.jhonatan.tabelafipe.repository.MarcaVeiculoRepository;
-import com.jhonatan.tabelafipe.service.ConsumoApi;
-import com.jhonatan.tabelafipe.service.ConverterDados;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
