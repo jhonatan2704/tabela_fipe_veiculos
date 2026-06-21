@@ -14,6 +14,7 @@ public class MarcaVeiculo {
     @Column(nullable = false)
     private String codigo;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TipoVeiculo tipoVeiculo;
     private String nome;
     @OneToMany(mappedBy = "marca",  fetch = FetchType.EAGER)
