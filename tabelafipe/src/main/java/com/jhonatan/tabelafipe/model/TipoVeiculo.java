@@ -1,7 +1,7 @@
 package com.jhonatan.tabelafipe.model;
 
 public enum TipoVeiculo {
-    CARRO("arro"),
+    CARRO("Carro"),
     MOTO("Moto"),
     CAMINHAO("Caminhao");
 
