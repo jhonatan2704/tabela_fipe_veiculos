@@ -31,6 +31,7 @@ GET /buscar/tipo/{tipo}
 Deploy
 
 API publicada no Render.
+https://tabela-fipe-veiculos-3.onrender.com
 
 Autor
 
