@@ -33,11 +33,11 @@ public class MarcaController {
         return veiculoService.exibirMarcasPorNome(marca);
     }
 
-    @PostMapping(value = "/adicionar")
-    @ResponseStatus(HttpStatus.CREATED)
-    public String adicionarMarca(@RequestBody MarcaVeiculo request) {
-        veiculoService.BuscaMarcaVeiculo(request.getTipoVeiculo(), request.getNome());
-        return "Marcas processadas com sucesso!";
-    }
+//    @PostMapping(value = "/adicionar")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public String adicionarMarca(@RequestBody MarcaVeiculo request) {
+//        veiculoService.BuscaMarcaVeiculo(request.getTipoVeiculo(), request.getNome());
+//        return "Marcas processadas com sucesso!";
+//    }
 
 }

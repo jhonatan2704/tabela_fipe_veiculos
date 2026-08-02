@@ -4,10 +4,7 @@ import com.jhonatan.tabelafipe.model.ModeloVeiculo;
 import com.jhonatan.tabelafipe.model.TipoVeiculo;
 import com.jhonatan.tabelafipe.repository.ModeloVeicularRepository;
 import com.jhonatan.tabelafipe.service.VeiculoService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,6 +34,12 @@ public class ModeloController {
     public List<ModeloVeiculo> buscarPorTipo(
             @PathVariable TipoVeiculo tipo) {
         return veiculoService.exibirModelosPorTipo(tipo);
+    }
+
+    @PostMapping("/adicionarModelo")
+    public List<ModeloVeiculo> adicionarModelo(TipoVeiculo tipoVeiculo, String nome) {
+        veiculoService.adicionarModelo(tipoVeiculo, nome);
+        return listarModelos();
     }
 
 }
